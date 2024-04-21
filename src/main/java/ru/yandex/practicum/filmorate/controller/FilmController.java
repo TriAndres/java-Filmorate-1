@@ -4,7 +4,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validation.Validation;
+import ru.yandex.practicum.filmorate.validation.ValidationFilm;
+import ru.yandex.practicum.filmorate.validation.ValidationUser;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,17 +14,17 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final Validation validation;
+    private final ValidationFilm validation;
     private final Map<Long, Film> films = new HashMap<>();
 
     public FilmController() {
-        validation = new Validation();
+        validation = new ValidationFilm();
     }
 
     @PostMapping
     public Film add(@Valid @RequestBody Film film) {
         film.setId(getNextId());
-        validation.validationFilm(film);
+        validation.validation(film);
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм");
         return film;
@@ -31,7 +32,7 @@ public class FilmController {
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        validation.validationFilm(film);
+        validation.validation(film);
         films.put(film.getId(), film);
         log.info("Фильм с id " + film.getId() + " был обновлён");
         return null;
