@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validation.Validation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,24 +13,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final Validation validation;
     private final Map<Long, User> users = new HashMap<>();
+
+    public UserController() {
+        validation = new Validation();
+    }
+
     @PostMapping
-    public User add(@RequestBody User user) {
-        user = User.builder()
-                .id(getNextId())
-                .build();
-        log.info("Добавлен новый пользователь");
+    public User add(@Valid @RequestBody User user) {
+        user.setId(getNextId());
+        validation.validationUser(user);
         users.put(user.getId(), user);
+        log.info("Добавлен новый пользователь");
         return user;
     }
     @PutMapping
-    public User update(@RequestBody User user) {
-        log.info("Пользователь с id {} обновлён", user.getId());
+    public User update(@Valid @RequestBody User user) {
+        validation.validationUser(user);
         users.put(user.getId(), user);
+        log.info("Пользователь с id " + user.getId() + " обновлён");
         return user;
     }
     @GetMapping
-    public Collection<User> getAll() {
+    public Collection<User> findAll() {
         return users.values();
     }
 
