@@ -33,8 +33,8 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         validation.validation(film);
         films.put(film.getId(), film);
-        log.info("Фильм с id " + film.getId() + " был обновлён");
-        return null;
+        log.info("Фильм с id {} был обновлён",film.getId());
+        return film;
     }
 
     @GetMapping

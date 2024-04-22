@@ -32,7 +32,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         validation.validation(user);
         users.put(user.getId(), user);
-        log.info("Пользователь с id " + user.getId() + " обновлён");
+        log.info("Пользователь с id {} обновлён",user.getId());
         return user;
     }
     @GetMapping
