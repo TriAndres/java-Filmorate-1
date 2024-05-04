@@ -12,11 +12,6 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public Map<Long, User> getUser() {
-        return users;
-    }
-
-    @Override
     public User create(User user) {
         users.put(user.getId(), user);
         return user;
@@ -26,6 +21,11 @@ public class InMemoryUserStorage implements UserStorage {
     public User update(User user) {
         users.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public Map<Long, User> findAll() {
+        return users;
     }
 
     @Override
