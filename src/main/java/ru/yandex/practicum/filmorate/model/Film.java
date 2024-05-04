@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collection;
+import java.util.Set;
+
 @Data
 @Builder
 public class Film {
@@ -11,4 +14,5 @@ public class Film {
     private String description;
     private String releaseDate;
     private Integer duration;
+    private Set<Long> likes;
 }

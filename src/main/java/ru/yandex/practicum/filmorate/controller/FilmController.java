@@ -1,53 +1,55 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validation.ValidationFilm;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-@Slf4j
+import java.util.List;
+
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final ValidationFilm validation;
-    private final Map<Long, Film> films = new HashMap<>();
 
-    public FilmController() {
-        validation = new ValidationFilm();
+    private final FilmService filmService;
+
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @PostMapping
-    public Film add(@Valid @RequestBody Film film) {
-        film.setId(getNextId());
-        validation.validation(film);
-        films.put(film.getId(), film);
-        log.info("Добавлен новый фильм");
-        return film;
+    public Film create(@Valid @RequestBody Film film) {
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        validation.validation(film);
-        films.put(film.getId(), film);
-        log.info("Фильм с id {} был обновлён",film.getId());
-        return film;
+        return filmService.update(film);
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return films.values();
+        return filmService.findAll();
     }
 
-    private Long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @GetMapping("/{id}")
+    public Film findFilmById(@PathVariable long id) {
+        return filmService.findFilmById(id);
+    }
+
+    @PutMapping(value = "/{id}/like/{userId}")
+    public void addLike(@PathVariable long id, @PathVariable long userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @GetMapping(value = "/{id}/like/{userId}")
+    public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getPopularFilms(count);
     }
 }
