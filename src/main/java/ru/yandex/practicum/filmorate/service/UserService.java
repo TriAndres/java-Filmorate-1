@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exCeption.UserDoesNotException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storege.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storege.user.UserStorage;
@@ -43,26 +44,35 @@ public class UserService {
         return userStorage.findAll().values();
     }
 
-    public User findUserById(long id) {
-        return null;
+    public User findUserById(long userId) {
+        User user = userStorage.findUserById(userId);
+        if (user == null) {
+            log.warn("Пользователь с id {} не найден", userId);
+            throw new UserDoesNotException();
+        }
+        return user;
     }
 
     public void deleteUser(long userId) {
-
+        userStorage.deleteUser(userId);
     }
 
-    public void addFriend(long id, long friendId) {
+    public void addFriend(long userId, long friendId) {
+        userStorage.addFriend(userId, friendId);
+        log.info("Пользователи с id {} и {} теперь друзья", userId, friendId);
     }
 
-    public void removeFromFriends(long id, long friendId) {
+    public void removeFromFriends(long userId, long friendId) {
+        userStorage.removeFromFriends(userId, friendId);
+        log.info("Пользователи с id {} и {} теперь не являются друзьями", userId, friendId);
     }
 
-    public List<User> getMutualFriends(long id, long otherId) {
-        return null;
+    public List<User> getMutualFriends(long userId, long otherId) {
+        return userStorage.getMutualFriends(userId,otherId);
     }
 
     public List<User> getAllFriends(long userId) {
-        return null;
+        return userStorage.getAllFriends(userId);
     }
 
     private Long getNextId() {

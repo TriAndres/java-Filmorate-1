@@ -13,15 +13,15 @@ public interface UserStorage {
 
     Map<Long, User> findAll();
 
-    User findUserById(long id);
+    User findUserById(long userId);
 
     void deleteUser(long userId);
 
-    void addFriend(long id, long friendId);
+    void addFriend(long userId, long friendId);
 
-    void removeFromFriends(long id, long friendId);
+    void removeFromFriends(long userId, long friendId);
 
-    List<User> getMutualFriends(long id, long otherId);
+    List<User> getMutualFriends(long userId, long otherId);
 
     List<User> getAllFriends(long userId);
 }
