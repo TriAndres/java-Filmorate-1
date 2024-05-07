@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exCeption.FilmDoesNotExistException;
-import ru.yandex.practicum.filmorate.exCeption.UserDoesNotException;
-import ru.yandex.practicum.filmorate.exCeption.ValidationException;
+import ru.yandex.practicum.filmorate.exseption.FilmDoesNotExistException;
+import ru.yandex.practicum.filmorate.exseption.UserDoesNotException;
+import ru.yandex.practicum.filmorate.exseption.ValidationException;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "ru.yandex.practicum.filmorate")

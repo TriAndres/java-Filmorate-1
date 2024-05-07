@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storege.film;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -7,7 +8,7 @@ import ru.yandex.practicum.filmorate.storege.user.UserStorage;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 @Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final UserStorage userStorage;
@@ -47,6 +48,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = findFilmById(filmId);
         if (film != null && userStorage.findUserById(userId) != null) {
             findFilmById(filmId).getLikes().add(userId);
+        } else {
+            log.info("Пользователь с id {} не поставил фильму с id {} лайк", userId, filmId);
         }
     }
 
