@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Data
