@@ -1,6 +1,6 @@
 # java-filmorate
-## ER-диаграмма
 Template repository for Filmorate project.
+## ER-диаграмма
 
+![filmorate](src\main\resources)
 
-![filmorate](https://disk.yandex.ru/i/cNEqveC5LKxmQQ)
