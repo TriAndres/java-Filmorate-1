@@ -1,23 +1,28 @@
 package ru.yandex.practicum.filmorate.storege.inmemory;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storege.FilmStorage;
 import ru.yandex.practicum.filmorate.storege.UserStorage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-@Slf4j
+
 @Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
-    private final UserStorage userStorage;
-    private final Map<Long, Film> films = new HashMap<>();
 
+    private final UserStorage userStorage;
+
+    @Autowired
     public InMemoryFilmStorage(@Qualifier("inMemoryUserStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
+
+    private final Map<Long, Film> films = new HashMap<>();
 
     @Override
     public Map<Long, Film> getFilms() {
@@ -37,7 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmById(Long id) {
+    public Film findFilmById(long id) {
         if (films.containsKey(id)) {
             return films.get(id);
         }
@@ -49,8 +54,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = findFilmById(filmId);
         if (film != null && userStorage.findUserById(userId) != null) {
             findFilmById(filmId).getLikes().add(userId);
-        } else {
-            log.info("Пользователь с id {} не поставил фильму с id {} лайк", userId, filmId);
         }
     }
 
@@ -60,5 +63,19 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film != null && userStorage.findUserById(userId) != null) {
             film.getLikes().remove(userId);
         }
+    }
+
+    public void deleteFilm(long filmId) {
+        films.remove(filmId);
+    }
+
+    @Override
+    public List<Film> getFilmsByDirectorIdSortedByYearOrLikes(int id, String sortBy) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Film> getRecommendations(long userId) {
+        return null; //inmemory больше не поддерживаем, поэтому просто заглушка
     }
 }

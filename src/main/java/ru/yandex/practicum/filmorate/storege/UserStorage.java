@@ -6,22 +6,21 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserStorage {
+    Map<Long, User> getUsers();
 
     User create(User user);
 
     User update(User user);
 
-    Map<Long, User> findAll();
-
-    User findUserById(long userId);
-
-    void deleteUser(long userId);
+    User findUserById(long id);
 
     void addFriend(long userId, long friendId);
 
     void removeFromFriends(long userId, long friendId);
 
-    List<User> getMutualFriends(long userId, long otherId);
+    List<User> getMutualFriends(long userId, long otherUserId);
 
     List<User> getAllFriends(long userId);
+
+    void deleteUser(long userId);
 }

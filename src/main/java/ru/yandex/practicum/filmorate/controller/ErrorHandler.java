@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exseption.FilmDoesNotExistException;
-import ru.yandex.practicum.filmorate.exseption.UserDoesNotException;
+import ru.yandex.practicum.filmorate.exseption.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.exseption.ValidationException;
 
 @Slf4j
@@ -28,7 +28,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFond(UserDoesNotException e) {
+    public ErrorResponse handleUserNotFond(UserDoesNotExistException e) {
         log.error(e.getMessage());
         return new ErrorResponse("Пользователь не найден");
     }
