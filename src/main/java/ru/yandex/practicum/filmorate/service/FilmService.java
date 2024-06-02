@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exseption.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storege.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storege.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.ValidationFilm;
 
 import java.util.Collection;

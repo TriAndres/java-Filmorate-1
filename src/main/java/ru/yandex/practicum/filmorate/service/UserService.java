@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exseption.UserDoesNotException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storege.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storege.user.UserStorage;
+import ru.yandex.practicum.filmorate.storege.FilmStorage;
+import ru.yandex.practicum.filmorate.storege.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ValidationUser;
 
 import java.util.Collection;

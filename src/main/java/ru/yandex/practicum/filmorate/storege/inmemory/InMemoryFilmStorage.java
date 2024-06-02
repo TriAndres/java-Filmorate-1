@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.storege.film;
+package ru.yandex.practicum.filmorate.storege.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storege.user.UserStorage;
+import ru.yandex.practicum.filmorate.storege.FilmStorage;
+import ru.yandex.practicum.filmorate.storege.UserStorage;
 
 import java.util.HashMap;
 import java.util.Map;

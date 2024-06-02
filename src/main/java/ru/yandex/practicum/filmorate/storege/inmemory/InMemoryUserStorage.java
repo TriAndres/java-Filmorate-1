@@ -1,8 +1,9 @@
-package ru.yandex.practicum.filmorate.storege.user;
+package ru.yandex.practicum.filmorate.storege.inmemory;
 
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storege.UserStorage;
 
 import java.util.*;
 
