@@ -23,6 +23,4 @@ public interface FilmStorage {
     void deleteFilm(long filmId);
 
     List<Film> getRecommendations(long userId);
-
-    List<Film> getFilmsByDirectorIdSortedByYearOrLikes(int id, String sortBy);
 }

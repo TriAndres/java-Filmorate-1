@@ -73,10 +73,6 @@ public class FilmService {
         filmStorage.deleteFilm(filmId);
     }
 
-    public List<Film> getFilmsByDirectorIdSortedByYearOrLikes(int directorId, String sortBy) {
-        return filmStorage.getFilmsByDirectorIdSortedByYearOrLikes(directorId, sortBy);
-    }
-
     public List<Film> getRecommendations(long userId) {
         return filmStorage.getRecommendations(userId);
     }
