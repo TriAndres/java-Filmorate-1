@@ -64,10 +64,4 @@ public class FilmController {
     public void deleteFilm(@NotNull @PathVariable long filmId) {
         filmService.deleteFilm(filmId);
     }
-
-    @GetMapping("/director/{directorId}")
-    public List<Film> getFilmsByDirectorIdSortedByYearOrLikes(@NotNull @PathVariable int directorId,
-                                                              @NotNull @RequestParam String sortBy) {
-        return filmService.getFilmsByDirectorIdSortedByYearOrLikes(directorId, sortBy);
-    }
 }
