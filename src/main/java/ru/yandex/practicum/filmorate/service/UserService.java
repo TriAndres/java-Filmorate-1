@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storege.UserStorage;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -26,11 +25,11 @@ public class UserService {
     }
 
     public Collection<User> getUsers() {
-        return Collections.unmodifiableCollection(userStorage.getUsers().values());
+        return userStorage.getUsers();
     }
 
     public User create(User user) {
-        for (User registeredUser : userStorage.getUsers().values()) {
+        for (User registeredUser : userStorage.getUsers()) {
             if (registeredUser.getEmail().equals(user.getEmail())) {
                 log.warn("Пользователь с электронной почтой " + user.getEmail()
                         + " уже зарегистрирован");

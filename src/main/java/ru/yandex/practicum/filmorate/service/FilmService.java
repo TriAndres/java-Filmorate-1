@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storege.FilmStorage;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class FilmService {
     }
 
     public Collection<Film> getFilms() {
-        return Collections.unmodifiableCollection(filmStorage.getFilms().values());
+        return filmStorage.getFilms();
     }
 
     public Film create(Film film) {
@@ -63,7 +62,7 @@ public class FilmService {
     }
 
     public List<Film> getMostPopularFilms(int count) {
-        return filmStorage.getFilms().values().stream()
+        return filmStorage.getFilms().stream()
                 .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());

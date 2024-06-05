@@ -14,10 +14,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Component("userDbStorage")
@@ -30,20 +27,20 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public Map<Long, User> getUsers() {
+    public Collection<User> getUsers() {
         Map<Long, User> users = new HashMap<>();
-        String sqlQuery = "SELECT * FROM \"USER\"";
+        String sqlQuery = "SELECT * FROM USERS;";
         List<User> usersFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToUser);
         for (User user : usersFromDb) {
             users.put(user.getId(), user);
         }
-        return users;
+        return users.values();
     }
 
     @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlQuery = "INSERT INTO \"USER\" (EMAIL, LOGIN, BIRTHDAY, NAME) VALUES (?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO USERS (EMAIL, LOGIN, BIRTHDAY, NAME) VALUES (?, ?, ?, ?)";
 
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -66,7 +63,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        String sqlQuery = "UPDATE \"USER\" SET EMAIL = ?, LOGIN = ?, BIRTHDAY = ?, NAME = ? WHERE USER_ID = ?";
+        String sqlQuery = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, BIRTHDAY = ?, NAME = ? WHERE USER_ID = ?";
 
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -78,7 +75,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(long id) {
-        String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = ?";
+        String sqlQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (userRows.next()) {
             User user = User.builder()
@@ -121,7 +118,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getMutualFriends(long userId, long otherUserId) {
-        String sqlQuery = "SELECT * FROM \"USER\" AS U WHERE U.USER_ID IN (SELECT F.USER_SECOND_ID " +
+        String sqlQuery = "SELECT * FROM USERS AS U WHERE U.USER_ID IN (SELECT F.USER_SECOND_ID " +
                 "FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ? " +
                 "INTERSECT SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, otherUserId);
@@ -130,7 +127,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getAllFriends(long userId) {
         User user = findUserById(userId);
-        String sqlQuery = "SELECT * FROM \"USER\" AS U WHERE U.USER_ID IN " +
+        String sqlQuery = "SELECT * FROM USERS AS U WHERE U.USER_ID IN " +
                 "(SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
     }
@@ -138,7 +135,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void deleteUser(long userId) {
         User user = findUserById(userId);
-        String sqlQuery = "DELETE FROM \"USER\" WHERE USER_ID = ?;";
+        String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?;";
         jdbcTemplate.update(sqlQuery, userId);
     }
 }

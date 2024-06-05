@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exseption.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -21,10 +22,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @Slf4j
@@ -34,21 +32,20 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserStorage userStorage;
 
-    @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate, @Qualifier("userDbStorage") UserStorage userStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.userStorage = userStorage;
     }
 
     @Override
-    public Map<Long, Film> getFilms() {
+    public Collection<Film> getFilms() {
         Map<Long, Film> films = new HashMap<>();
         String sqlQuery = "SELECT F.*, R.RATING_NAME FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID ";
         List<Film> filmsFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
         for (Film film : filmsFromDb) {
             films.put(film.getId(), film);
         }
-        return films;
+        return films.values();
     }
 
     @Override
