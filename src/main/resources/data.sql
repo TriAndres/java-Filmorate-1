@@ -1,11 +1,11 @@
-INSERT INTO PUBLIC.RATING (RATING_NAME) VALUES
+INSERT INTO rating (rating_name) VALUES
              ('G'),
              ('PG'),
              ('PG-13'),
              ('R'),
              ('NC-17');
 
-INSERT INTO PUBLIC.GENRE(GENRE_NAME) VALUES
+INSERT INTO genre(genre_name) VALUES
             ('Комедия'),
             ('Драма'),
             ('Мультфильм'),

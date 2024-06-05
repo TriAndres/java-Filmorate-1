@@ -29,7 +29,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Collection<User> getUsers() {
         Map<Long, User> users = new HashMap<>();
-        String sqlQuery = "SELECT * FROM USERS;";
+        String sqlQuery = "SELECT * FROM users;";
         List<User> usersFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToUser);
         for (User user : usersFromDb) {
             users.put(user.getId(), user);
@@ -40,7 +40,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User create(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sqlQuery = "INSERT INTO USERS (EMAIL, LOGIN, BIRTHDAY, NAME) VALUES (?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO users (email, login, birthday, name) VALUES (?, ?, ?, ?)";
 
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -63,7 +63,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        String sqlQuery = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, BIRTHDAY = ?, NAME = ? WHERE USER_ID = ?";
+        String sqlQuery = "UPDATE users SET email = ?, login = ?, birthday = ?, name = ? WHERE user_id = ?";
 
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -75,15 +75,15 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(long id) {
-        String sqlQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
+        String sqlQuery = "SELECT * FROM users WHERE user_id = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (userRows.next()) {
             User user = User.builder()
-                    .email(userRows.getString("EMAIL"))
-                    .login(userRows.getString("LOGIN"))
-                    .name(userRows.getString("NAME"))
-                    .id(userRows.getLong("USER_ID"))
-                    .birthday((Objects.requireNonNull(userRows.getDate("BIRTHDAY"))).toLocalDate())
+                    .email(userRows.getString("email"))
+                    .login(userRows.getString("login"))
+                    .name(userRows.getString("name"))
+                    .id(userRows.getLong("user_id"))
+                    .birthday((Objects.requireNonNull(userRows.getDate("birthday"))).toLocalDate())
                     .build();
             log.info("Найден пользователь с id {}", id);
             return user;
@@ -94,11 +94,11 @@ public class UserDbStorage implements UserStorage {
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
-                .email(rs.getString("EMAIL"))
-                .login(rs.getString("LOGIN"))
-                .name(rs.getString("NAME"))
-                .id(rs.getLong("USER_ID"))
-                .birthday((rs.getDate("BIRTHDAY")).toLocalDate())
+                .email(rs.getString("email"))
+                .login(rs.getString("login"))
+                .name(rs.getString("name"))
+                .id(rs.getLong("user_id"))
+                .birthday((rs.getDate("birthday")).toLocalDate())
                 .build();
     }
 
@@ -106,36 +106,36 @@ public class UserDbStorage implements UserStorage {
     public void addFriend(long userId, long friendId) {
         User user = findUserById(userId);
         User friend = findUserById(friendId);
-        String sqlQuery = "INSERT INTO FRIENDSHIP (USER_FIRST_ID, USER_SECOND_ID) VALUES (?, ?);";
+        String sqlQuery = "INSERT INTO friendship (user_first_id, user_second_id) VALUES (?, ?);";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public void removeFromFriends(long userId, long friendId) {
-        String sqlQuery = "DELETE FROM FRIENDSHIP WHERE USER_FIRST_ID = ? AND USER_SECOND_ID = ?;";
+        String sqlQuery = "DELETE FROM friendship WHERE user_first_id = ? AND user_second_id = ?;";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public List<User> getMutualFriends(long userId, long otherUserId) {
-        String sqlQuery = "SELECT * FROM USERS AS U WHERE U.USER_ID IN (SELECT F.USER_SECOND_ID " +
-                "FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ? " +
-                "INTERSECT SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
+        String sqlQuery = "SELECT * FROM users AS u WHERE u.user_id IN (SELECT f.user_second_id" +
+                "FROM friendship AS f WHERE f.user_first_id = ? " +
+                "INTERSECT SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, otherUserId);
     }
 
     @Override
     public List<User> getAllFriends(long userId) {
         User user = findUserById(userId);
-        String sqlQuery = "SELECT * FROM USERS AS U WHERE U.USER_ID IN " +
-                "(SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
+        String sqlQuery = "SELECT * FROM users AS u WHERE u.user_id IN " +
+                "(SELECT f.user_second_id FROM friendship AS f WHERE f.user_first_id = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
     }
 
     @Override
     public void deleteUser(long userId) {
         User user = findUserById(userId);
-        String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?;";
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?;";
         jdbcTemplate.update(sqlQuery, userId);
     }
 }

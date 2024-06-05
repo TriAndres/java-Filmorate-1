@@ -27,7 +27,7 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Map<Integer, Genre> getAllGenres() {
         Map<Integer, Genre> allGenre = new HashMap<>();
-        String sqlQuery = "SELECT * FROM GENRE;";
+        String sqlQuery = "SELECT * FROM genre;";
         List<Genre> genreFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
         for (Genre genre : genreFromDb) {
             allGenre.put(genre.getId(), genre);
@@ -37,11 +37,11 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Optional<Genre> findGenreById(Integer id) {
-        String sqlQuery = "SELECT * FROM GENRE WHERE GENRE_ID = ?";
+        String sqlQuery = "SELECT * FROM genre WHERE genre_id = ?";
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (genreRows.next()) {
-            Genre genre = new Genre(genreRows.getInt("GENRE_ID"),
-                    genreRows.getString("GENRE_NAME"));
+            Genre genre = new Genre(genreRows.getInt("genre_id"),
+                    genreRows.getString("genre_name"));
             log.info("Найден жанр с id {}", id);
             return Optional.of(genre);
         }
@@ -50,6 +50,6 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(rs.getInt("GENRE_ID"), rs.getString("GENRE_NAME"));
+        return new Genre(rs.getInt("genre_id"), rs.getString("genre_name"));
     }
 }
