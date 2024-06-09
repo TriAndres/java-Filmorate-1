@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exseption.UserDoesNotException;
+import ru.yandex.practicum.filmorate.exseption.UserDoesNotExistException;
+import ru.yandex.practicum.filmorate.exseption.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storege.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storege.user.UserStorage;
-import ru.yandex.practicum.filmorate.validation.ValidationUser;
+import ru.yandex.practicum.filmorate.storege.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,45 +16,46 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserService {
-    private final ValidationUser validation;
     private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
+    private final FilmService filmService;
     @Autowired
-    public UserService(@Qualifier("inMemoryUserStorage") UserStorage userStorage, @Qualifier("inMemoryFilmStorage") FilmStorage filmStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FilmService filmService) {
         this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-        validation = new ValidationUser();
+        this.filmService = filmService;
+    }
+
+    public Collection<User> getUsers() {
+        return userStorage.getUsers();
     }
 
     public User create(User user) {
-        user.setId(getNextId());
-        validation.validation(user);
+        for (User registeredUser : userStorage.getUsers()) {
+            if (registeredUser.getEmail().equals(user.getEmail())) {
+                log.warn("Пользователь с электронной почтой " + user.getEmail()
+                        + " уже зарегистрирован");
+                throw new ValidationException();
+            }
+        }
         log.info("Добавлен новый пользователь");
         return userStorage.create(user);
     }
 
     public User update(User user) {
-        user.setId(getNextId());
-        validation.validation(user);
-        log.info("Пользователь с id {} обновлён",user.getId());
+        if (userStorage.findUserById(user.getId()) == null) {
+            log.warn("Невозможно обновить пользователя");
+            throw new UserDoesNotExistException();
+        }
+        log.info("Пользователь с id {} обновлён", user.getId());
         return userStorage.update(user);
     }
 
-    public Collection<User> findAll() {
-        return userStorage.findAll().values();
-    }
-
-    public User findUserById(long userId) {
-        User user = userStorage.findUserById(userId);
+    public User findUserById(long id) {
+        User user = userStorage.findUserById(id);
         if (user == null) {
-            log.warn("Пользователь с id {} не найден", userId);
-            throw new UserDoesNotException();
+            log.warn("Пользователя с id {} не найдено", id);
+            throw new UserDoesNotExistException();
         }
         return user;
-    }
-
-    public void deleteUser(long userId) {
-        userStorage.deleteUser(userId);
     }
 
     public void addFriend(long userId, long friendId) {
@@ -75,12 +76,13 @@ public class UserService {
         return userStorage.getAllFriends(userId);
     }
 
-    private Long getNextId() {
-        long currentMaxId = userStorage.findAll().keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    public void deleteUser(long userId) {
+        userStorage.deleteUser(userId);
     }
+
+    public List<Film> getRecommendations(long userId) {
+        findUserById(userId);
+        return filmService.getRecommendations(userId);
+    }
+
 }

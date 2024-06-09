@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exseption.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storege.film.FilmStorage;
-import ru.yandex.practicum.filmorate.validation.ValidationFilm;
+import ru.yandex.practicum.filmorate.storege.FilmStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,23 +16,22 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     public final FilmStorage filmStorage;
-    private final ValidationFilm validation;
 
     @Autowired
-    public FilmService(@Qualifier("inMemoryFilmStorage") FilmStorage filmStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        validation = new ValidationFilm();
+    }
+
+    public Collection<Film> getFilms() {
+        return filmStorage.getFilms();
     }
 
     public Film create(Film film) {
-        validation.validation(film);
-        film.setId(getNextId());
         log.info("Добавлен новый фильм");
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
-        validation.validation(film);
         if (filmStorage.findFilmById(film.getId()) == null) {
             log.warn("Невозможно обновить фильм");
             throw new FilmDoesNotExistException();
@@ -42,9 +40,7 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    public Collection<Film> findAll() {
-        return filmStorage.getFilms().values();
-    }
+
 
     public Film findFilmById(Long id) {
         Film film = filmStorage.findFilmById(id);
@@ -65,19 +61,18 @@ public class FilmService {
 
     }
 
-    public List<Film> getPopularFilms(int count) {
-        return filmStorage.getFilms().values().stream()
-                .sorted((a1, a2) -> a2.getLikes().size() - a1.getLikes().size())
+    public List<Film> getMostPopularFilms(int count) {
+        return filmStorage.getFilms().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
     }
-    private long getNextId(){
-        long currentNextId = filmStorage.getFilms().keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentNextId;
 
+    public void deleteFilm(long filmId) {
+        filmStorage.deleteFilm(filmId);
+    }
+
+    public List<Film> getRecommendations(long userId) {
+        return filmStorage.getRecommendations(userId);
     }
 }
